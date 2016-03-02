@@ -12,8 +12,28 @@
 
  namespace DJORM\Fields;
 
+ use Exception;
+
  abstract class IFields {
+
+     protected $rules; //Rules for field
+     protected $field_value;
+
      abstract public function set($value);
      abstract public function get();
-     abstract public function verifyFieldRules();
+
+     public function __construct($rules=[]){
+         $this->rules = $rules;
+         $this->field_value = null;
+     }
+
+     public function verifyFieldRules() {
+        foreach($this->rules as $rule => $value) {
+            if($rule == 'required') {
+                if($value == true && $this->field_value == null) {
+                    throw new Exception("This field should not be null");
+                }
+            }
+        }
+     }
  }

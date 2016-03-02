@@ -16,4 +16,7 @@ Conn::dbConn($pdo);
 
 $teste = new PersonModel();
 echo 'Testando....';
+$teste->name = 'abc';
 $teste->save();
+
+echo '<br><br> Funcionou: '.$teste->name;

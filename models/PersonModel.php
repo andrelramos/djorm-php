@@ -4,6 +4,9 @@ namespace MODELS;
 use DJORM\Model as BaseModel;
 
 class PersonModel extends BaseModel {
-    public $name = ['CharField', ['required' => true]];
-    public $phone = ['CharField'];
+    /*
+        TODO The properties should be protected
+    */
+    protected $name = ['CharField', ['required' => true]];
+    protected $phone = ['CharField', ['required' => false]];
 }

@@ -16,27 +16,27 @@ use Exception;
 use DJORM\Fields\IFields;
 
 class CharField extends IFields {
-    private $rules; //Rules for this field
-    private $value;
-
-    public function __construct($rules=[], $value=''){
-        $this->rules = $rules;
-        $this->value = $value;
-    }
-
+    
     public function set($value) {
-        if(is_string($value) && strlen($value) <= 255) {
-            $this->value = $value;
-        } else {
-            throw new Exception("This field should be a string with max length 255 chars");
-        }
+        $this->field_value = $value;
     }
 
     public function get() {
-        return $this->value;
+        return $this->field_value;
     }
 
     public function verifyFieldRules() {
-        echo 'abc';
+        /**
+        *   @return true if the value in field is according with rules
+        */
+
+        if($this->field_value) { //If field_value is not empty
+            if(!is_string($this->field_value) || strlen($this->field_value) > 255) {
+                throw new Exception("This field should be a string with max length 255 chars");
+            }
+        }
+
+        parent::verifyFieldRules();
+
     }
 }

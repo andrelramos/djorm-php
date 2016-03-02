@@ -20,24 +20,25 @@ abstract class Model {
 
     //Properties
     private $db_conn;
-
+    private $overloading = []; /**  Location for overloaded data.  */
 
     //Methods
     public function __construct() {
         $this->db_conn = Connection::dbConn();
 
-        $class = get_class($this);
-        $class_properties = get_class_vars($class);
+        $class_properties = get_class_vars(get_class($this));
 
         foreach($class_properties as $field => $value) {
+            /* Jumping overloading and db_conn, because they are not a field property
+            defined in a model class */
+            if($field == 'overloading' || $field == 'db_conn') {
+                continue;
+            }
+
             $field_type = $value[0];
             switch($field_type) {
                 case 'CharField':
-                    if( isset($value[1]) ) { //If rules for field was defined
-                        $this->$field = new CharField($value[1]);
-                    } else {
-                        $this->$field = new CharField();
-                    }
+                    $this->$field = new CharField($value[1]);
                     break;
             }
         }
@@ -46,14 +47,30 @@ abstract class Model {
     public function save() {
         $class = get_class($this);
         $class_properties = get_class_vars($class);
+
         echo '<br>Save in table ' . $class;
         echo '<ul>';
         foreach($class_properties as $field => $value) {
             //If propertie is a child of IField class
             if ( get_parent_class($this->$field) == 'DJORM\Fields\IFields') {
+                $this->$field->verifyFieldRules();
                 echo '<li>'.$field.'('.$value[0].'): '.$this->$field->get().'</li>';
             }
         }
         echo '</ul>';
     }
+
+    /* Overloading functions */
+    
+    public function __set($name, $value) {
+        $this->overloading[$name] = $value;
+        $this->$name->set($value);
+    }
+
+    public function __get($name) {
+        if (array_key_exists($name, $this->overloading)) {
+            return $this->overloading[$name];
+        }
+    }
+
 }
