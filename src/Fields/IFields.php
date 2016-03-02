@@ -9,10 +9,11 @@
  * @link     https://github.com/andrelramos/djorm-php
  *
  */
- 
+
  namespace DJORM\Fields;
- 
- interface IFields {
-     public function setValue();
-     public function getValue();
+
+ abstract class IFields {
+     abstract public function set($value);
+     abstract public function get();
+     abstract public function verifyFieldRules();
  }
