@@ -16,7 +16,27 @@ use Exception;
 use DJORM\Fields\IFields;
 
 class CharField extends IFields {
-    
+
+    private $default = null;
+    private $max_length = 255;
+
+    public function __construct($rules=[]) {
+        parent::__construct($rules);
+
+        /* Define rules */
+
+         //default
+        if( isset($this->rules['default']) ) {
+            $this->default = $this->rules['default'];
+        }
+
+         //max_length
+        if( isset($this->rules['max_length']) ) {
+            $this->max_length = $this->rules['max_length'];
+        }
+
+    }
+
     public function set($value) {
         $this->field_value = $value;
     }
@@ -30,13 +50,18 @@ class CharField extends IFields {
         *   @return true if the value in field is according with rules
         */
 
-        if($this->field_value) { //If field_value is not empty
-            if(!is_string($this->field_value) || strlen($this->field_value) > 255) {
-                throw new Exception("This field should be a string with max length 255 chars");
-            }
+        if($this->field_value == null && $this->default != null) {
+            $this->set($this->default);
+        }
+
+        if(!is_string($this->field_value) && $this->field_value != null) {
+            throw new Exception("This field should be a string");
+        } else if(strlen($this->field_value) > $this->max_length) {
+            throw new Exception("The max length of this field is ".$this->max_length);
         }
 
         parent::verifyFieldRules();
 
+        return true;
     }
 }

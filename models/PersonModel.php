@@ -7,6 +7,7 @@ class PersonModel extends BaseModel {
     /*
         TODO The properties should be protected
     */
-    protected $name = ['CharField', ['required' => true]];
-    protected $phone = ['CharField', ['required' => false]];
+
+    protected $name = ['CharField', ['max_length' => 3, 'default' => '123', 'RegexValidator' => '/^([0-9]){3}$/']];
+    protected $phone = ['CharField', ['null' => true]];
 }

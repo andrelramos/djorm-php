@@ -19,19 +19,18 @@ use DJORM\Fields\CharField;
 abstract class Model {
 
     //Properties
-    private $db_conn;
-    private $overloading = []; /**  Location for overloaded data.  */
+    private $db_conn_;
 
     //Methods
     public function __construct() {
-        $this->db_conn = Connection::dbConn();
+        $this->db_conn_ = Connection::dbConn();
 
         $class_properties = get_class_vars(get_class($this));
 
         foreach($class_properties as $field => $value) {
-            /* Jumping overloading and db_conn, because they are not a field property
+            /* Jumping db_conn_, because they are not a field property
             defined in a model class */
-            if($field == 'overloading' || $field == 'db_conn') {
+            if(substr($field, -1) == '_') {
                 continue;
             }
 
@@ -61,16 +60,13 @@ abstract class Model {
     }
 
     /* Overloading functions */
-    
+
     public function __set($name, $value) {
-        $this->overloading[$name] = $value;
         $this->$name->set($value);
     }
 
     public function __get($name) {
-        if (array_key_exists($name, $this->overloading)) {
-            return $this->overloading[$name];
-        }
+        return $this->$name->get();
     }
 
 }
