@@ -19,6 +19,7 @@ class CharField extends IFields {
 
     private $default = null;
     private $max_length = 255;
+    private $regex_validator = null;
 
     public function __construct($rules=[]) {
         parent::__construct($rules);
@@ -34,6 +35,11 @@ class CharField extends IFields {
         if( isset($this->rules['max_length']) ) {
             $this->max_length = $this->rules['max_length'];
         }
+
+        //regex_validator
+       if(isset($this->rules['RegexValidator']) && is_string($this->rules['RegexValidator'])) {
+           $this->regex_validator = $this->rules['RegexValidator'];
+       }
 
     }
 
@@ -58,6 +64,8 @@ class CharField extends IFields {
             throw new Exception("This field should be a string");
         } else if(strlen($this->field_value) > $this->max_length) {
             throw new Exception("The max length of this field is ".$this->max_length);
+        } else if($this->regex_validator != null && !preg_match($this->regex_validator, $this->field_value) ) {
+            throw new Exception("This format is invalid");
         }
 
         parent::verifyFieldRules();
