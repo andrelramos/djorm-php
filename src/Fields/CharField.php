@@ -37,8 +37,8 @@ class CharField extends IFields {
         }
 
         //regex_validator
-       if(isset($this->rules['regexValidator']) && is_string($this->rules['regexValidator'])) {
-           $this->regex_validator = $this->rules['regexValidator'];
+       if(isset($this->rules['regex_validator']) && is_string($this->rules['regex_validator'])) {
+           $this->regex_validator = $this->rules['regex_validator'];
        }
 
     }
